@@ -10,3 +10,4 @@ linters:
 
 run:
   deadline: 5m
+  targets: ["./src"]
