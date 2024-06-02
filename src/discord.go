@@ -37,14 +37,34 @@ func discordAddHandlers(discord *discordgo.Session) {
 
 func basicCommand(discord *discordgo.Session, i *discordgo.InteractionCreate) {
 	fmt.Println("Command executed")
-	discord.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "Hey there! Congratulations, you just executed your first slash command",
-		},
+
+	// Defer the response
+	err := discord.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
 	})
-	// discord.ChannelMessageSend(message.ChannelID, "Hello, world!")
+	if err != nil {
+		fmt.Println("Failed to defer interaction response:", err)
+		return
+	}
+
+	_, err = discord.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
+		Content: "Hey there! Congratulations, you just executed your first slash command",
+	})
+	if err != nil {
+		fmt.Println("Failed to send followup message:", err)
+		return
+	}
 }
+
+// func basicCommand(discord *discordgo.Session, i *discordgo.InteractionCreate) {
+// 	fmt.Println("Command executed")
+// 	discord.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+// 		Type: discordgo.InteractionResponseChannelMessageWithSource,
+// 		Data: &discordgo.InteractionResponseData{
+// 			Content: "Hey there! Congratulations, you just executed your first slash command",
+// 		},
+// 	})
+// }
 
 // func discordPrefixedCommands(discord *discordgo.Session, message *discordgo.MessageCreate) {
 // 	if message.Content[:1] != commandPrefix || message.Content == "" {
