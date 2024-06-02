@@ -43,11 +43,11 @@ func main() {
 
 	defer discord.Close()
 
-	fmt.Println("Removing commands...")
-	for _, v := range registeredCommands {
-		err := discord.ApplicationCommandDelete(discord.State.User.ID, *GuildID, v.ID)
-		if err != nil {
-			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
-		}
-	}
+	// fmt.Println("Removing commands...")
+	// for _, v := range registeredCommands {
+	// 	err := discord.ApplicationCommandDelete(discord.State.User.ID, *GuildID, v.ID)
+	// 	if err != nil {
+	// 		log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
+	// 	}
+	// }
 }
