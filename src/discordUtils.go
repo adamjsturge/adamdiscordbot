@@ -10,15 +10,15 @@ const (
 
 func createDiscordTextChannel(channel_name string, discord *discordgo.Session, guildID string) (string, error) {
 	channel, err := discord.GuildChannelCreateComplex(guildID, discordgo.GuildChannelCreateData{
-		Name: channel_name,
-		Type: discordgo.ChannelTypeGuildText,
+		Name:     channel_name,
+		Type:     discordgo.ChannelTypeGuildText,
+		ParentID: getEnv("CATEGORY_ID"),
 		PermissionOverwrites: []*discordgo.PermissionOverwrite{
 			{
 				ID:   guildID,
 				Type: discordgo.PermissionOverwriteTypeRole,
 				Deny: discordgo.PermissionViewChannel | discordgo.PermissionReadMessageHistory,
 			},
-
 			{
 				ID:    discord.State.User.ID,
 				Type:  discordgo.PermissionOverwriteTypeMember,
