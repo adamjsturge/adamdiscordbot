@@ -29,6 +29,7 @@ func main() {
 
 	registeredCommands := make([]*discordgo.ApplicationCommand, len(commands))
 	for i, v := range commands {
+		fmt.Printf("Registering command '%v'...\n", v.Name)
 		cmd, err := discord.ApplicationCommandCreate(discord.State.User.ID, *GuildID, v)
 		if err != nil {
 			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
@@ -36,18 +37,23 @@ func main() {
 		registeredCommands[i] = cmd
 	}
 
+	defer removeCommands(registeredCommands, discord)
+
+	// panic(1)
 	fmt.Println("Bot is now running. Press Ctrl+C to exit.")
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
 
 	defer discord.Close()
+}
 
-	// fmt.Println("Removing commands...")
-	// for _, v := range registeredCommands {
-	// 	err := discord.ApplicationCommandDelete(discord.State.User.ID, *GuildID, v.ID)
-	// 	if err != nil {
-	// 		log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
-	// 	}
-	// }
+func removeCommands(registeredCommands []*discordgo.ApplicationCommand, discord *discordgo.Session) {
+	fmt.Println("Removing commands...")
+	for _, v := range registeredCommands {
+		err := discord.ApplicationCommandDelete(discord.State.User.ID, *GuildID, v.ID)
+		if err != nil {
+			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
+		}
+	}
 }
