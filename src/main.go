@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	discord, err := discordgo.New("Bot " + os.Getenv("DISCORD_TOKEN"))
+	discord, err := discordgo.New("Bot " + getEnv("DISCORD_TOKEN"))
 	if err != nil {
 		err_msg := "Error creating Discord session: " + err.Error()
 		panic(err_msg)
@@ -37,15 +37,16 @@ func main() {
 		registeredCommands[i] = cmd
 	}
 
-	defer removeCommands(registeredCommands, discord)
-
 	// panic(1)
 	fmt.Println("Bot is now running. Press Ctrl+C to exit.")
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
 
+	defer removeCommands(registeredCommands, discord)
+
 	defer discord.Close()
+
 }
 
 func removeCommands(registeredCommands []*discordgo.ApplicationCommand, discord *discordgo.Session) {

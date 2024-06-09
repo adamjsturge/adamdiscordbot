@@ -19,6 +19,10 @@ var (
 			Description: "Sends a hello world message",
 		},
 		{
+			Name:        "ping",
+			Description: "Ping the bot to check if it's online",
+		},
+		{
 			Name:        "create-game",
 			Description: "Create special channel for a game",
 			Options: []*discordgo.ApplicationCommandOption{
@@ -39,6 +43,7 @@ func discordAddHandlers(discord *discordgo.Session) {
 	commandHandlers := map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"helloworld":  basicCommand,
 		"create-game": createGameCommand,
+		"ping":        basicCommand,
 	}
 
 	discord.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -49,7 +54,7 @@ func discordAddHandlers(discord *discordgo.Session) {
 }
 
 func basicCommand(discord *discordgo.Session, i *discordgo.InteractionCreate) {
-	fmt.Println("Command executed")
+	fmt.Println("Basic Command executed")
 
 	// Defer the response
 	err := discord.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
@@ -81,11 +86,15 @@ func createGameCommand(discord *discordgo.Session, i *discordgo.InteractionCreat
 		return
 	}
 
-	_, err = createDiscordTextChannel(i.ApplicationCommandData().Options[0].StringValue(), discord, i.GuildID)
+	channelID, err := createDiscordTextChannel(i.ApplicationCommandData().Options[0].StringValue(), discord, i.GuildID)
 	if err != nil {
 		fmt.Println("Failed to create channel:", err)
 		return
 	}
+
+	fmt.Print("Channel created: ", channelID)
+	// setDiscordPermissions(discord, channelID, "TheReds", DISCORD_ALLOW)
+	// setDiscordPermissions(discord, channelID, DISCORD_ROLE, DISCORD_DENY)
 
 	_, err = discord.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
 		Content: "Creating a new game channel...",

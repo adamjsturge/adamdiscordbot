@@ -28,7 +28,7 @@ FROM golang:1.22-alpine3.19 as dev
 
 RUN apk update && apk add --no-cache gcc musl-dev ca-certificates
 
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 
 WORKDIR /app/src
 COPY src/go.mod src/go.sum ./
