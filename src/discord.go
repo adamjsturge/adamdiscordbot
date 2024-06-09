@@ -86,7 +86,11 @@ func createGameCommand(discord *discordgo.Session, i *discordgo.InteractionCreat
 		return
 	}
 
-	channelID, err := createDiscordTextChannel(i.ApplicationCommandData().Options[0].StringValue(), discord, i.GuildID)
+	gameName := i.ApplicationCommandData().Options[0].StringValue()
+
+	role, _ := createDiscordRole(gameName, discord, i.GuildID)
+
+	channelID, err := createDiscordTextChannel(gameName, discord, i.GuildID, role.ID)
 	if err != nil {
 		fmt.Println("Failed to create channel:", err)
 		return
